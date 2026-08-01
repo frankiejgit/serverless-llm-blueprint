@@ -1,6 +1,6 @@
 # Serverless LLM Blueprint: Fine-Tuning & Serving Gemma 4 on Cloud Run
 
-A Google-recommended reference architecture for fine-tuning, mounting, and securely serving open LLMs (Gemma 4 12B) on Google Cloud Run using vLLM, GCS FUSE, Cloud Armor, and Identity-Aware Proxy (IAP).
+A reference architecture for fine-tuning, mounting, and securely serving open LLMs (Gemma 4 12B) on Google Cloud Run using vLLM, GCS FUSE, Cloud Armor, and Identity-Aware Proxy (IAP).
 
 ---
 
