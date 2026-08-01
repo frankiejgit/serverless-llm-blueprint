@@ -10,18 +10,6 @@ This blueprint provides an enterprise-grade, cost-effective alternative to cloud
 
 ![Serverless LLM Blueprint Architecture](assets/blueprint_diagram.png)
 
-```
-[ PDF Documents ] ---> [ Cloud Run Data Synthesis Job (Gemini API) ] ---> [ JSONL Training Dataset ]
-                                  (sa: sare-synth)                                  |
-                                                                                    v
-[ vLLM Serving (Cloud Run GPU + GCS FUSE) ] <--- [ Tuned LoRA Adapter ] <--- [ Cloud Run QLoRA Training Job ]
-         (sa: sare-backend)                                                        (sa: sare-backend)
-         ^
-         | (Private VPC Egress via sare-subnet + IAM Auth)
-[ OpenWebUI + Smart Auth Proxy (Multi-Container Cloud Run) ] <--- [ Load Balancer + Cloud Armor + IAP ]
-         (sa: sare-frontend)
-```
-
 ---
 
 ## Repository Structure
