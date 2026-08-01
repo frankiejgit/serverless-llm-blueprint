@@ -6,7 +6,7 @@ A Google-recommended reference architecture for fine-tuning, mounting, and secur
 
 ## Architecture Overview
 
-This blueprint provides an enterprise-grade, cost-effective alternative to cloud AI APIs by giving organizations total sovereignty over their models and data.
+This blueprint provides an enterprise-grade, cost-effective alternative to cloud AI APIs by giving organizations more control over their models and data.
 
 ![Serverless LLM Blueprint Architecture](assets/blueprint_diagram.png)
 
