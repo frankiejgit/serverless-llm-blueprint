@@ -10,6 +10,7 @@ This blueprint provides an enterprise-grade, cost-effective alternative to cloud
 
 ![Serverless LLM Blueprint Architecture](assets/blueprint_diagram.png)
 
+
 ---
 
 ## Repository Structure
