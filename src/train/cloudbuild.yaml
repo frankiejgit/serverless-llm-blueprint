@@ -1,0 +1,39 @@
+steps:
+  # 1. Build the container image (run from src/train/, so Dockerfile is in the current context)
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', '${_IMAGE_URL}', '.']
+
+  # 2. Push the container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_IMAGE_URL}']
+
+  # 3. Deploy the Cloud Run Job
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'jobs'
+      - 'deploy'
+      - '${_JOB_NAME}'
+      - '--image=${_IMAGE_URL}'
+      - '--tasks=16'
+      - '--max-retries=0'
+      - '--task-timeout=2h'
+      - '--region=${_REGION}'
+      - '--service-account=${_SYNTH_SA_EMAIL}'
+      - '--cpu=2'
+      - '--memory=4Gi'
+      - '--set-env-vars=PROJECT_ID=${PROJECT_ID}'
+      - '--add-volume=name=gcs-data-volume,type=cloud-storage,bucket=${_BUCKET_NAME}'
+      - '--add-volume-mount=volume=gcs-data-volume,mount-path=/mnt/data'
+      - '--args=--project=${PROJECT_ID},--pdf-path=/mnt/data/pdf,--output-dir=/mnt/data/training,--archive-dir=/mnt/data/processed,--count=50,--config=config.json'
+
+substitutions:
+  _REGION: us-central1
+  _IMAGE_URL: ''
+  _JOB_NAME: jsonl-data-generator
+  _BUCKET_NAME: '' 
+  _SYNTH_SA_EMAIL: ''
+
+options:
+  logging: CLOUD_LOGGING_ONLY

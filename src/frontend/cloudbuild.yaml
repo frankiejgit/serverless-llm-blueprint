@@ -1,0 +1,24 @@
+steps:
+  # 1. Build and push Auth Proxy container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', '${_PROXY_IMAGE_URL}', './auth-proxy']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_PROXY_IMAGE_URL}']
+
+  # 2. Pull official OpenWebUI image and re-tag in Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        docker pull ghcr.io/open-webui/open-webui:main
+        docker tag ghcr.io/open-webui/open-webui:main ${_OPENWEBUI_IMAGE_URL}
+        docker push ${_OPENWEBUI_IMAGE_URL}
+
+substitutions:
+  _PROXY_IMAGE_URL: ''
+  _OPENWEBUI_IMAGE_URL: ''
+
+options:
+  logging: CLOUD_LOGGING_ONLY

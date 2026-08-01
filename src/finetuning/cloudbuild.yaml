@@ -1,0 +1,49 @@
+steps:
+  # 1. Build the container image (run from src/finetuning/, so Dockerfile is in the current context)
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', '${_IMAGE_URL}', '.']
+
+  # 2. Push the container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_IMAGE_URL}']
+
+  # 3. Deploy the Cloud Run Job
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'beta'
+      - 'run'
+      - 'jobs'
+      - 'deploy'
+      - '${_JOB_NAME}'
+      - '--image=${_IMAGE_URL}'
+      - '--tasks=1'
+      - '--max-retries=0'
+      - '--task-timeout=1h'
+      - '--region=${_REGION}'
+      - '--service-account=${_BACKEND_SA_EMAIL}'
+      - '--gpu=1'
+      - '--gpu-type=nvidia-rtx-pro-6000'
+      - '--cpu=20'
+      - '--memory=80Gi'
+      - '--no-gpu-zonal-redundancy'
+      - '--set-env-vars=PROJECT_ID=${PROJECT_ID}'
+      - '--set-secrets=HF_TOKEN=HF_TOKEN:latest'
+      - '--add-volume=name=gcs-data-volume,type=cloud-storage,bucket=${_DATA_BUCKET_NAME}'
+      - '--add-volume-mount=volume=gcs-data-volume,mount-path=/mnt/data'
+      - '--add-volume=name=gcs-models-volume,type=cloud-storage,bucket=${_MODELS_BUCKET_NAME}'
+      - '--add-volume-mount=volume=gcs-models-volume,mount-path=/mnt/models'
+      - '--args=--project=${PROJECT_ID},--region=${_REGION},--model-id=${_MODEL_NAME},--train-dir=/mnt/data/training,--output-weights-dir=/mnt/models/sare-agroforestry,--epochs=1,--batch-size=2,--lr=2e-4,--service-name=${_SERVICE_NAME}'
+
+substitutions:
+  _REGION: us-central1
+  _IMAGE_URL: ''
+  _JOB_NAME: lora-finetuning-job
+  _DATA_BUCKET_NAME: ''
+  _MODELS_BUCKET_NAME: ''
+  _BACKEND_SA_EMAIL: ''
+  _MODEL_NAME: 'google/gemma-4-12b'
+  _SERVICE_NAME: 'gemma-4-tuned-sare'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
