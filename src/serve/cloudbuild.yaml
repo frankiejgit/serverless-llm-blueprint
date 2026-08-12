@@ -33,7 +33,7 @@ steps:
       - '--no-gpu-zonal-redundancy'
       - '--min-instances=1'
       - '--cpu-boost'
-      - '--ingress=all'
+      - '--ingress=internal'
       - '--no-allow-unauthenticated'
       - '--timeout=900'
       - '--add-volume=name=gcs-models-volume,type=cloud-storage,bucket=${_MODELS_BUCKET_NAME}'
